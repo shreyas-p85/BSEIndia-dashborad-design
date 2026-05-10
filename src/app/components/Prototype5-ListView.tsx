@@ -1,8 +1,8 @@
-import image_Sensex_data_1 from '@/imports/Sensex-data-1.png'
 import image_header_img_2 from '@/imports/header-img-2.png'
+import image_Sensex_data_1 from '@/imports/Sensex-data-1.png'
 import image_footer_img_2 from '@/imports/footer-img-2.png'
 import { useState } from 'react';
-import { ChevronRight, BarChart3, FileText, TrendingUp, Database, Users, Download, Building2, UserCircle, Activity, Search, Menu } from 'lucide-react';
+import { ChevronRight, BarChart3, FileText, TrendingUp, Database, Users, Download, Building2, UserCircle, Activity, ChevronDown, List } from 'lucide-react';
 
 // Same data structure
 const dashboardData = {
@@ -90,106 +90,130 @@ const dashboardData = {
   }
 };
 
-export default function Prototype3Tabs() {
-  const [selectedTab, setSelectedTab] = useState<string>('market-data');
+export default function Prototype5ListView() {
+  const [expandedCategory, setExpandedCategory] = useState<string | null>('market-data');
+  const [expandedSubCat, setExpandedSubCat] = useState<string | null>(null);
 
-  const currentCategory = dashboardData[selectedTab as keyof typeof dashboardData];
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategory(expandedCategory === categoryId ? null : categoryId);
+    setExpandedSubCat(null);
+  };
+
+  const toggleSubCategory = (subCatId: string) => {
+    setExpandedSubCat(expandedSubCat === subCatId ? null : subCatId);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-40">
+      <header className="bg-white shadow-sm border-b">
         <img src={image_header_img_2} alt="BSE Header" className="w-full" />
         <div className="text-white text-center py-3 px-4 bg-[#243166]">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
+          <h1 className="text-2xl md:text-3xl font-bold mb-2">
             Simplifying Access Across BSEIndia
           </h1>
-          <p className="text-sm md:text-lg lg:text-xl font-normal">
+          <p className="text-lg md:text-xl font-normal">
             Delivering a consistent and intuitive experience for Market Participants & Stakeholders
           </p>
         </div>
         <img src={image_Sensex_data_1} alt="Market Data" className="w-full" />
-
-        {/* Tabs Navigation */}
-        <div className="bg-white border-t border-gray-200 overflow-x-auto">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex gap-1">
-              {Object.entries(dashboardData).map(([key, category]) => {
-                const Icon = category.icon;
-                const isActive = selectedTab === key;
-                return (
-                  <button
-                    key={key}
-                    onClick={() => setSelectedTab(key)}
-                    className={`flex items-center gap-2 px-3 md:px-4 py-3 text-xs md:text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                      isActive
-                        ? 'border-[#243166] text-[#243166] bg-blue-50'
-                        : 'border-transparent text-gray-600 hover:text-[#243166] hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="hidden md:inline">{category.title}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto px-4 md:px-6 py-8">
-        <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
-            <div className={`${currentCategory.color} p-3 md:p-4 rounded-2xl shadow-lg`}>
-              {(() => {
-                const Icon = currentCategory.icon;
-                return <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" />;
-              })()}
-            </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">{currentCategory.title}</h1>
-              {currentCategory.subtitle && (
-                <p className="text-sm md:text-base text-gray-600 mt-1">{currentCategory.subtitle}</p>
-              )}
-            </div>
+      <main className="flex-1 container mx-auto px-6 py-8">
+        <div className="mb-8 text-center">
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <List className="w-8 h-8 text-[#243166]" />
+            <h2 className="text-4xl font-bold text-gray-800">Comprehensive List View</h2>
           </div>
-          <div className="h-1 w-24 md:w-32 bg-[#243166] rounded-full"></div>
+          <p className="text-gray-600 text-lg">Expand categories to view detailed information</p>
+          <div className="h-1 w-24 bg-[#243166] mx-auto mt-4 rounded-full"></div>
         </div>
 
-        {/* Sub-Categories Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-          {currentCategory.subCategories.map((subCat) => {
-            const SubIcon = subCat.icon;
+        {/* Expandable List */}
+        <div className="max-w-5xl mx-auto space-y-3">
+          {Object.entries(dashboardData).map(([key, category]) => {
+            const Icon = category.icon;
+            const isExpanded = expandedCategory === key;
             return (
-              <div
-                key={subCat.id}
-                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden hover:shadow-xl transition-shadow"
-              >
-                <div className={`${currentCategory.color} bg-opacity-10 p-5 border-b-4 ${currentCategory.color.replace('bg-', 'border-')}`}>
-                  <div className="flex items-center gap-3">
-                    <div className={`${currentCategory.color} p-3 rounded-xl shadow-md`}>
-                      <SubIcon className="w-6 h-6 text-white" />
+              <div key={key} className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                {/* Category Header */}
+                <button
+                  onClick={() => toggleCategory(key)}
+                  className="w-full flex items-center justify-between p-5 hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`${category.color} p-3 rounded-lg`}>
+                      <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-800">{subCat.title}</h3>
-                      <p className="text-sm text-gray-500 mt-1">{subCat.items.length} items available</p>
+                    <div className="text-left">
+                      <h3 className="text-xl font-bold text-gray-800">{category.title}</h3>
+                      {category.subtitle && (
+                        <p className="text-sm text-gray-500 mt-1">{category.subtitle}</p>
+                      )}
                     </div>
                   </div>
-                </div>
-                <div className="p-5 bg-white max-h-96 overflow-y-auto">
-                  <ul className="space-y-1">
-                    {subCat.items.map((item, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-2 text-gray-700 hover:text-red-600 transition-colors cursor-pointer py-2 px-3 rounded-lg hover:bg-red-50 group"
-                      >
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-red-600 group-hover:translate-x-1 transition-all mt-0.5 flex-shrink-0" />
-                        <span className="text-sm leading-relaxed">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-500 font-medium">
+                      {category.subCategories.length} {category.subCategories.length === 1 ? 'category' : 'categories'}
+                    </span>
+                    <ChevronDown
+                      className={`w-6 h-6 text-gray-400 transition-transform ${
+                        isExpanded ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </div>
+                </button>
+
+                {/* Sub-Categories */}
+                {isExpanded && (
+                  <div className="border-t border-gray-200 bg-gray-50">
+                    {category.subCategories.map((subCat) => {
+                      const SubIcon = subCat.icon;
+                      const isSubExpanded = expandedSubCat === subCat.id;
+                      return (
+                        <div key={subCat.id} className="border-b border-gray-200 last:border-b-0">
+                          <button
+                            onClick={() => toggleSubCategory(subCat.id)}
+                            className="w-full flex items-center justify-between p-4 pl-20 hover:bg-white transition-colors"
+                          >
+                            <div className="flex items-center gap-3">
+                              <SubIcon className="w-5 h-5 text-[#243166]" />
+                              <span className="font-semibold text-gray-700">{subCat.title}</span>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded-full">
+                                {subCat.items.length} items
+                              </span>
+                              <ChevronDown
+                                className={`w-5 h-5 text-gray-400 transition-transform ${
+                                  isSubExpanded ? 'rotate-180' : ''
+                                }`}
+                              />
+                            </div>
+                          </button>
+
+                          {/* Items List */}
+                          {isSubExpanded && (
+                            <div className="bg-white p-4 pl-24">
+                              <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                {subCat.items.map((item, index) => (
+                                  <li
+                                    key={index}
+                                    className="flex items-start gap-2 text-gray-700 hover:text-[#243166] transition-colors cursor-pointer py-2 px-3 rounded-lg hover:bg-blue-50 group"
+                                  >
+                                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-[#243166] group-hover:translate-x-1 transition-all mt-0.5 flex-shrink-0" />
+                                    <span className="text-sm">{item}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}
@@ -197,7 +221,7 @@ export default function Prototype3Tabs() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-8 md:mt-16">
+      <footer className="mt-16">
         <img src={image_footer_img_2} alt="BSE Footer" className="w-full" />
       </footer>
     </div>

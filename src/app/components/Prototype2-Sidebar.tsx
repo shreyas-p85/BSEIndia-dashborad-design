@@ -93,6 +93,7 @@ const dashboardData = {
 export default function Prototype2Sidebar() {
   const [selectedCategory, setSelectedCategory] = useState<string>('market-data');
   const [expandedSubCat, setExpandedSubCat] = useState<string | null>(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSubCategory = (subCatId: string) => {
     setExpandedSubCat(expandedSubCat === subCatId ? null : subCatId);
@@ -103,40 +104,67 @@ export default function Prototype2Sidebar() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-      <img src={image_header_img_4} />
+      <header className="bg-white shadow-sm border-b sticky top-0 z-40">
+        <img src={image_header_img_4} alt="BSE Header" className="w-full" />
         <div className="text-white text-center py-3 px-4 bg-[#243166]">
-  <h1 className="text-2xl md:text-3xl font-bold mb-2">
-    Simplifying Access Across BSEIndia
-  </h1>
-  <p className="text-lg md:text-xl font-normal">
-    Delivering a consistent and intuitive experience for Market Participants & Stakeholders
-  </p>
-</div>
-        <img src={image_Sensex_data_3} />
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold mb-2">
+            Simplifying Access Across BSEIndia
+          </h1>
+          <p className="text-sm md:text-lg lg:text-xl font-normal">
+            Delivering a consistent and intuitive experience for Market Participants & Stakeholders
+          </p>
+        </div>
+        <img src={image_Sensex_data_3} alt="Market Data" className="w-full" />
+
+        {/* Mobile Menu Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="lg:hidden fixed bottom-4 left-4 z-50 bg-[#243166] text-white p-3 rounded-full shadow-lg"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
       </header>
 
       {/* Main Content with Sidebar */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex relative">
         {/* Sidebar */}
-        <aside className="w-80 bg-white shadow-lg border-r border-gray-200">
-          <div className="p-6 text-white bg-[#243166]">
-            <h2 className="text-xl font-bold">Categories</h2>
-            <p className="text-sm text-red-100 mt-1">Select a category</p>
+        <aside className={`
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0
+          fixed lg:static top-0 left-0 h-full
+          w-80 bg-white shadow-lg border-r border-gray-200
+          transition-transform duration-300 z-30
+        `}>
+          <div className="p-6 text-white bg-[#243166] flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold">Categories</h2>
+              <p className="text-sm text-blue-100 mt-1">Select a category</p>
+            </div>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden text-white"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
-          <nav className="overflow-y-auto h-[calc(100vh-300px)]">
+          <nav className="overflow-y-auto h-[calc(100vh-200px)]">
             {Object.entries(dashboardData).map(([key, category]) => {
               const Icon = category.icon;
               const isActive = selectedCategory === key;
               return (
                 <button
                   key={key}
-                  onClick={() => setSelectedCategory(key)}
-                  className={`w-full flex items-center gap-3 p-4 border-b border-gray-100 transition-colors ${ isActive ? 'bg-red-50 border-l-4 border-l-[#243166]' : 'hover:bg-[#243166]' } bg-[#ffffff]`}
+                  onClick={() => {
+                    setSelectedCategory(key);
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 p-4 border-b border-gray-100 transition-colors ${
+                    isActive ? 'bg-blue-50 border-l-4 border-l-[#243166]' : 'hover:bg-gray-50'
+                  }`}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#243166]' : 'text-gray-600'} `} />
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#243166]' : 'text-gray-600'}`} />
                   <div className="flex-1 text-left">
-                    <div className={`text-sm font-semibold ${isActive ? 'text-[#243166]' : 'text-gray-800'} text-[#243166]`}>
+                    <div className={`text-sm font-semibold ${isActive ? 'text-[#243166]' : 'text-gray-800'}`}>
                       {category.title}
                     </div>
                     {category.subtitle && (
@@ -150,24 +178,32 @@ export default function Prototype2Sidebar() {
           </nav>
         </aside>
 
+        {/* Overlay for mobile */}
+        {isSidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-20"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Main Content Area */}
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
           <div className="mb-8">
-            <div className="flex items-center gap-4 mb-4">
-              <div className={`${currentCategory.color} p-4 rounded-2xl shadow-lg bg-[#243166]`}>
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+              <div className="bg-[#243166] p-3 md:p-4 rounded-2xl shadow-lg">
                 {(() => {
                   const Icon = currentCategory.icon;
-                  return <Icon className="w-10 h-10 text-white" />;
+                  return <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" />;
                 })()}
               </div>
               <div>
-                <h1 className="text-4xl font-bold text-gray-800">{currentCategory.title}</h1>
+                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">{currentCategory.title}</h1>
                 {currentCategory.subtitle && (
-                  <p className="text-gray-600 mt-1">{currentCategory.subtitle}</p>
+                  <p className="text-sm md:text-base text-gray-600 mt-1">{currentCategory.subtitle}</p>
                 )}
               </div>
             </div>
-            <div className="h-1 w-32 rounded-full bg-[#243166]"></div>
+            <div className="h-1 w-24 md:w-32 rounded-full bg-[#243166]"></div>
           </div>
 
           {/* Accordion Style Sub-Categories */}
@@ -219,8 +255,8 @@ export default function Prototype2Sidebar() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-blue-900 to-blue-950 text-white mt-4">
-        <img src={image_footer_img_1} />
+      <footer className="mt-8 md:mt-16">
+        <img src={image_footer_img_1} alt="BSE Footer" className="w-full" />
       </footer>
     </div>
   );
