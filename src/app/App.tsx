@@ -10,7 +10,7 @@ import Prototype6Dashboard from "./components/Prototype6-Dashboard";
 export default function App() {
   const [selectedPrototype, setSelectedPrototype] = useState<
     1 | 2 | 3 | 4 | 5 | 6
-  >(2);
+  >(1);
   const [isSwitcherMinimized, setIsSwitcherMinimized] = useState(true);
 
   const renderPrototype = () => {
@@ -36,7 +36,7 @@ export default function App() {
   return (
     <div className="relative">
       {/* Prototype Selector - Floating Button */}
-      <div className="hidden fixed bottom-4 md:bottom-8 right-4 md:right-8 z-[100] bg-white rounded-2xl shadow-2xl border-2 border-gray-200 max-w-[90vw] md:max-w-none">
+      <div className="fixed bottom-4 md:bottom-8 right-4 md:right-8 z-[100] bg-white rounded-2xl shadow-2xl border-2 border-gray-200 max-w-[90vw] md:max-w-none">
         {/* Minimize/Maximize Button */}
         <button
           onClick={() => setIsSwitcherMinimized(!isSwitcherMinimized)}
